@@ -10,7 +10,7 @@
 2. [替换相应依赖Jar](REMOVEJAR.md)
 3. 将JanusGraph的lib分发至节点各个机器。
 
-*遇到问题可以提issue，共同来看*
+`遇到问题可以提issue，共同来看`
 
 [![JanusGraph logo](janusgraph.png)](http://janusgraph.org/)
 
