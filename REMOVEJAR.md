@@ -34,3 +34,6 @@ rm –f /opt/janusgraph-0.2.3-hadoop2/lib/janusgraph-hadoop-0.2.3.jar
 rm –f /opt/janusgraph-0.2.3-hadoop2/lib/janusgraph-hbase-0.2.3.jar
 ```
 
+5. guava-16.0.1.jar替换
+
+从网上下一个guava-16.0.1.jar替换到lib下
