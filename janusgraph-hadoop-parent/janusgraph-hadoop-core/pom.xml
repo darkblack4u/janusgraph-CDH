@@ -1,0 +1,232 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.janusgraph</groupId>
+        <artifactId>janusgraph-hadoop-parent</artifactId>
+        <version>0.2.3-shade</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>janusgraph-hadoop-core</artifactId>
+    <name>JanusGraph-Hadoop: Version-independent Core</name>
+    <url>http://janusgraph.org</url>
+
+    <properties>
+        <top.level.basedir>${basedir}/../..</top.level.basedir>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop2.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.mrunit</groupId>
+            <artifactId>mrunit</artifactId>
+            <version>${mrunit.version}</version>
+            <classifier>hadoop2</classifier>
+            <optional>true</optional>
+            <!-- <scope>test</scope> -->
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>janusgraph-cassandra</artifactId>
+            <version>0.2.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.janusgraph</groupId>
+                    <artifactId>janusgraph-core</artifactId>
+                </exclusion>
+            </exclusions>
+            <!-- TODO this should be scoped test -->
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>janusgraph-hbase-core</artifactId>
+            <version>0.2.3-shade</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>janusgraph-cassandra</artifactId>
+            <version>0.2.3</version>
+            <classifier>tests</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.janusgraph</groupId>
+                    <artifactId>janusgraph-core</artifactId>
+                </exclusion>
+            </exclusions>
+            <!-- TODO this should be scoped test -->
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>janusgraph-es</artifactId>
+            <version>0.2.3-shade</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Need this for compile-time imports on
+             org.apache.hadoop.hbase.mapreduce -->
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-server</artifactId>
+            <version>${hbase100.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hbase</groupId>
+            <artifactId>hbase-client</artifactId>
+            <version>${hbase100.version}</version>
+            <optional>true</optional>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${gmavenplus.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generateStubs</goal>
+                            <goal>compile</goal>
+                            <!-- Writing Groovy tests?  Uncomment these.
+                            <goal>generateTestStubs</goal>
+                            <goal>testCompile</goal>
+                            -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>shade-gremlin-groovy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.google.guava:guava</include>
+                                </includes>
+                            </artifactSet>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google.guava</pattern>
+                                    <shadedPattern>org.janusgraph.shaded.google_guava</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.common</pattern>
+                                    <shadedPattern>org.janusgraph.shaded.google_common</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.google.thirdparty</pattern>
+                                    <shadedPattern>org.janusgraph.shaded.google_thirdparty</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <!-- false below means the shade plugin overwrites the main project artifact (the one with no classifier).
+                                 false does *not* actually detach the main artifact, despite what the option name suggests. -->
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <minimizeJar>false</minimizeJar>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>assemble-shared-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                            <descriptors>
+                                <descriptor>src/assembly/shared-resources.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>assemble-example-data</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <attach>true</attach>
+                            <descriptors>
+                                <descriptor>src/assembly/example-data.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <!-- Inherited the Hadoop job jar assembly from the parent, but this is
+                         only useful in the janusgraph-hadoop-1 and -2 modules.  Disable it. -->
+                    <execution>
+                        <id>build-job-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <executions>
+                    <!-- Tests are executed in the janusgraph-hadoop-1 and -2 modules -->
+                    <execution>
+                        <id>default-test</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <!-- The janusgraph-hadoop-1 and -2 modules use our test classes -->
+                    <execution>
+                        <id>pack-test-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- Redeclare gpg-plugin at the bottom to ensure it runs after all the other packaging goals -->
+    <profiles>
+        <profile>
+            <id>janusgraph-release</id>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
