@@ -1,4 +1,5 @@
 > 实际工作中遇到了JanusGraph与CDH的兼容问题，做了简单的尝试，能够把OLAP on SPARK任务跑起来了，希望对大家有帮助
+> In the previous work, I solved the compatibility issue between JanusGraph and CDH. I have made an uncomplicated operation to develop the OLAP task on the Spark Platform. I hope it can help your work.
 > - JanusGraph 0.2.3
 > - CDH 5.7.6
 > - hadoop-hdfs/yarn 2.6.0-cdh5.7.6
@@ -6,9 +7,9 @@
 
 实际项目中需要操作：
 
-1. [关于需要新做的JanusGraph相关Jar](DIFF-cn.md)
-2. [替换相应依赖Jar](REMOVEJAR.md)
-3. 将JanusGraph的lib分发至节点各个机器。
+1. [关于需要新做的JanusGraph相关Jar/New jars related to JanusGraph](DIFF-cn.md)
+2. [替换相应依赖Jar/Replace Jars](REMOVEJAR.md)
+3. 将JanusGraph的lib分发至节点各个机器/Distribute the lib directory to other nodes。
 
 `遇到问题可以提issue，共同来看`
 
