@@ -1,5 +1,7 @@
 > 实际工作中遇到了JanusGraph与CDH的兼容问题，做了简单的尝试，能够把OLAP on SPARK任务跑起来了，希望对大家有帮助
+> 
 > In the previous work, I solved the compatibility issue between JanusGraph and CDH. I have made an uncomplicated operation to develop the OLAP task on the Spark Platform. I hope it can help your work.
+> 
 > - JanusGraph 0.2.3
 > - CDH 5.7.6
 > - hadoop-hdfs/yarn 2.6.0-cdh5.7.6
